@@ -1,0 +1,45 @@
+{% load static %}<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{% static 'js/synthetic.js' %}"></script>
+<script language="JavaScript">
+$(document).ready(function(){
+    var synthetic = $.synthetic({'errorElementID': 'failure', 'rpc_url': '{% url 'synthetic:list' %}', 'onSuccess': function(data){
+	$(data.items).each(function(i,v){
+	    $('table').append('<tr><td>'+v.city+'</td><td>'+v.temperature+'</td><td></td></tr>');
+	});
+	$('table').append();
+    }, 'onFailure': function(){
+    }});
+    synthetic.list();
+
+    $('#add').on('click', function(){
+	var city = $('input[name=city]').val();
+	var temperature = $('input[name=temperature]').val();
+	synthetic.create(city, temperature);
+	return false;
+    });
+});
+</script>
+</head>
+<body>
+
+<div id="failure"></div>
+
+<table id="list">
+<tr>
+<th>City</th>
+<th>Temperature<th>
+<th>Taken At</th>
+</tr>
+<tr>
+<td><input type="text" name="city" /></td>
+<td><input type="text" name="temperature" /></td>
+<td>&nbsp;</td>
+</tr>
+</table>
+
+<input type="submit" value="Add record" id="add" />
+
+</body>
