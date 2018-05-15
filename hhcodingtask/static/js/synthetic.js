@@ -14,26 +14,15 @@
                     errorElementID: ''
                 },
                 options),
-            get_json: function(data, callback, error_callback) {
+            get_json: function(callback, error_callback) {
                 $.ajax({
                     url: API.options.rpc_url,
                     cache: false,
                     dataType: 'json',
-                    data: data,
                     beforeSend: function(xhr) {
                         // set auth token here
                     },
                     success: function(data, status) {
-                        if (data && data.hasOwnProperty('error')) {
-                            if (!error_callback) {
-                                API.error_happened();
-                            } else {
-                                error_callback(data);
-                            }
-                            return;
-                        } else {
-                            $('#failure').hide();
-                        }
                         if (callback) callback(data, status);
                     }
                 }).fail(function(jqxhr, textStatus, error) {
@@ -91,13 +80,13 @@
                 $('#' + API.options.errorElementID).empty().append('<span class="err">' + message + '</span>');
             },
             get_objects_list: function() {
-                API.get_json();
+                API.get_json(API.options.onSuccess, API.options.onFailure);
             },
-	    create_object: function(city, temperature){
-		var form_data = new FormData();
-		form_data.append('city', city);
-		form_data.append('temperature', temperature);
-		API.post_json(API.options.rpc_url, JSON.stringify(form_data), {}, function(data, status){}, function(xhr, status, msg){},  function(evt){});
+	    create_object: function(city, temperature, callback){
+		var data = JSON.stringify({'city': city, 'temperature': temperature});
+		API.post_json(API.options.rpc_url, data, {}, function(data, status){
+		    if(callback) callback(data);
+		}, function(xhr, status, msg){},  function(evt){});
 	    }
         };
         return {

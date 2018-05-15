@@ -3,12 +3,18 @@ import json
 from django.http import JsonResponse, Http404
 from django.shortcuts import render
 from django.views.generic import View, TemplateView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import GenericModel, AnyData
 from schematics.exceptions import ModelValidationError, ModelConversionError
 
+class CSRFExemptMixin(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(CSRFExemptMixin, self).dispatch(*args, **kwargs)
 
-class GenericView(View):
+class GenericView(CSRFExemptMixin):
     http_method_names = ['post', 'get']
 
     def post(self, request):
@@ -39,7 +45,7 @@ class GenericView(View):
         return JsonResponse(data=return_data)
 
 
-class GenericDetailView(View):
+class GenericDetailView(CSRFExemptMixin):
 
     def get_or_404(self, pk):
         try:

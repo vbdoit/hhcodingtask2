@@ -4,12 +4,16 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="{% static 'js/synthetic.js' %}"></script>
 <script language="JavaScript">
+function display(data){
+	$('table').append($(
+	    $.map(data.items, function(value,key){
+        	return '<tr><td>'+value.city+'</td><td>' + value.temperature + '</td><td></td></tr>'
+    	    }).join('')));
+}
+
 $(document).ready(function(){
     var synthetic = $.synthetic({'errorElementID': 'failure', 'rpc_url': '{% url 'synthetic:list' %}', 'onSuccess': function(data){
-	$(data.items).each(function(i,v){
-	    $('table').append('<tr><td>'+v.city+'</td><td>'+v.temperature+'</td><td></td></tr>');
-	});
-	$('table').append();
+	display(data);
     }, 'onFailure': function(){
     }});
     synthetic.list();
@@ -17,7 +21,9 @@ $(document).ready(function(){
     $('#add').on('click', function(){
 	var city = $('input[name=city]').val();
 	var temperature = $('input[name=temperature]').val();
-	synthetic.create(city, temperature);
+	synthetic.create(city, temperature, function(data){
+	    $('table').append('<tr><td>'+data.city+'</td><td>'+data.temperature+'</td><td></td></tr>');
+	});
 	return false;
     });
 });
