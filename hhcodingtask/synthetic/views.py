@@ -2,7 +2,7 @@ import json
 
 from django.http import JsonResponse, Http404
 from django.shortcuts import render
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 
 from .models import GenericModel, AnyData
 from schematics.exceptions import ModelValidationError, ModelConversionError
@@ -68,3 +68,7 @@ class GenericDetailView(View):
             for field, messages in exc.messages.items():
                result[field] = exc.messages[field].to_primitive()
             return JsonResponse(result, status=400)
+
+
+class GenericFormView(TemplateView):
+    template_name = 'synthetic/form.html'

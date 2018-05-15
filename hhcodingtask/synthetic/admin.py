@@ -33,10 +33,4 @@ class GenericChangeForm(forms.ModelForm):
 class GenericModelAdmin(admin.ModelAdmin):
     form = GenericChangeForm
 
-    fieldsets = (
-        (None, {
-            'fields': ('city',),
-        }),
-    )
-
     # TODO: define get_list_display, make fieldsets dynamic, etc
